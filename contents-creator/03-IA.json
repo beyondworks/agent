@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "title": "VideoForge Information Architecture",
+    "version": "1.0.0",
+    "date": "2026-03-22"
+  },
+
+  "navigation": {
+    "type": "sidebar",
+    "items": [
+      { "label": "대시보드", "icon": "LayoutDashboard", "route": "/" },
+      { "label": "프로젝트", "icon": "FolderVideo", "route": "/projects" },
+      { "label": "템플릿", "icon": "LayoutTemplate", "route": "/templates" },
+      { "label": "설정", "icon": "Settings", "route": "/settings" }
+    ]
+  },
+
+  "routes": {
+    "public": [
+      { "path": "/login", "page": "로그인", "components": ["LoginForm", "OAuthButtons"] },
+      { "path": "/signup", "page": "회원가입", "components": ["SignupForm", "OAuthButtons"] },
+      { "path": "/", "page": "랜딩 페이지 (비로그인)", "components": ["Hero", "Features", "Pricing", "CTA"] }
+    ],
+
+    "authenticated": [
+      {
+        "path": "/",
+        "page": "대시보드",
+        "description": "최근 프로젝트, 사용량 통계, 빠른 시작",
+        "components": ["RecentProjects", "UsageStats", "QuickStart"]
+      },
+      {
+        "path": "/projects",
+        "page": "프로젝트 목록",
+        "description": "전체 프로젝트 그리드/리스트 뷰",
+        "components": ["ProjectGrid", "ProjectFilters", "NewProjectButton"]
+      },
+      {
+        "path": "/projects/new",
+        "page": "새 프로젝트",
+        "description": "주제 및 콘텐츠 타입 설정",
+        "components": ["TopicInput", "ContentTypeSelector", "PlatformSelector"]
+      },
+      {
+        "path": "/projects/:id",
+        "page": "프로젝트 워크스페이스",
+        "description": "프로젝트 메인 화면 - 스텝 기반 UI",
+        "layout": "워크스페이스 (좌: 스텝 네비게이션, 우: 작업 영역)",
+        "sub_steps": [
+          {
+            "step": 1,
+            "path": "/projects/:id/script",
+            "page": "대본 작성",
+            "description": "AI 대본 생성 + 편집기",
+            "components": [
+              "ScriptGenerationForm (키워드/URL/텍스트 입력)",
+              "ScriptEditor (마크다운 에디터, 씬 분할 뷰)",
+              "QualityChecklist (성공 요인 점수)",
+              "SceneBreakdown (씬 목록 + 타임라인)"
+            ]
+          },
+          {
+            "step": 2,
+            "path": "/projects/:id/style",
+            "page": "스타일 설정",
+            "description": "비주얼 스타일 선택/커스텀",
+            "components": [
+              "StylePresetGrid (프리셋 스타일 카드)",
+              "ReferenceUploader (레퍼런스 이미지 업로드)",
+              "StylePreview (선택된 스타일 미리보기)",
+              "StyleSettings (색상 팔레트, 분위기 슬라이더)"
+            ]
+          },
+          {
+            "step": 3,
+            "path": "/projects/:id/scenes",
+            "page": "씬 생성",
+            "description": "씬별 이미지/영상 생성 및 선택",
+            "components": [
+              "SceneTimeline (가로 타임라인 스크롤)",
+              "SceneCard (씬 미리보기 + 재생성 버튼)",
+              "SceneDetail (선택된 씬 확대 + 후보 목록)",
+              "GenerationProgress (생성 진행률)"
+            ]
+          },
+          {
+            "step": 4,
+            "path": "/projects/:id/edit",
+            "page": "편집",
+            "description": "씬 순서 편집 + 자막/음성 설정",
+            "components": [
+              "TimelineEditor (드래그앤드롭 타임라인)",
+              "SubtitleEditor (자막 스타일 설정)",
+              "VoiceSettings (TTS 음성 선택, 속도, 톤)",
+              "TransitionPicker (씬 간 전환 효과)",
+              "VideoPreview (프리뷰 재생기)"
+            ]
+          },
+          {
+            "step": 5,
+            "path": "/projects/:id/export",
+            "page": "내보내기",
+            "description": "렌더링 + 다운로드",
+            "components": [
+              "ExportSettings (해상도, FPS, 포맷)",
+              "RenderProgress (렌더링 진행 상태 바)",
+              "DownloadButton (완성 영상 다운로드)",
+              "ShareOptions (유튜브 업로드 등)"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/templates",
+        "page": "템플릿 관리",
+        "description": "저장된 스타일+설정 템플릿",
+        "components": ["TemplateGrid", "TemplateEditor"]
+      },
+      {
+        "path": "/settings",
+        "page": "설정",
+        "tabs": [
+          { "tab": "프로필", "components": ["ProfileForm", "AvatarUpload"] },
+          { "tab": "구독", "components": ["PlanSelector", "BillingHistory", "UsageChart"] },
+          { "tab": "API 키", "components": ["ApiKeyManager (자체 Gemini 키 연결 옵션)"] },
+          { "tab": "음성", "components": ["DefaultVoiceSettings", "VoicePreview"] }
+        ]
+      }
+    ]
+  },
+
+  "global_components": {
+    "layout": ["Sidebar", "TopBar", "BreadcrumbNav"],
+    "feedback": ["Toast", "ProgressBar", "LoadingSpinner", "ErrorBoundary"],
+    "modals": ["ConfirmDialog", "ImageViewer", "VideoPlayer"]
+  }
+}

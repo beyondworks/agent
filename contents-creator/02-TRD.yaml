@@ -1,0 +1,362 @@
+meta:
+  title: "VideoForge Technical Requirements Document"
+  version: "1.0.0"
+  date: "2026-03-22"
+  status: Draft
+
+# ============================================================
+# 1. 시스템 아키텍처
+# ============================================================
+architecture:
+  pattern: "Event-Driven Microservices (Serverless + Worker)"
+  description: |
+    Next.js 프론트엔드 + API Routes가 사용자 요청을 처리하고,
+    비동기 작업(AI 생성, 렌더링)은 별도 Worker 서버에서 큐 기반 처리.
+    미디어 파일은 Supabase Storage에 저장.
+
+  components:
+    frontend:
+      framework: "Next.js 15 (App Router)"
+      language: "TypeScript 5.x"
+      styling: "Tailwind CSS 4.x"
+      state: "Zustand (클라이언트) + React Query (서버 상태)"
+      ui_library: "shadcn/ui"
+
+    backend:
+      api: "Next.js API Routes (Route Handlers)"
+      runtime: "Node.js 20 (Vercel Serverless Functions)"
+      auth: "Supabase Auth (OAuth 2.0 + Magic Link)"
+      orm: "Prisma 6.x"
+
+    worker:
+      runtime: "Node.js 20 (자체 서버 또는 Railway/Render)"
+      queue: "Inngest (이벤트 기반 비동기 작업)"
+      video_processing: "FFmpeg 7.x"
+      reason: |
+        Vercel Serverless는 실행 시간 제한(60초 Pro, 300초 Enterprise)이 있어
+        영상 렌더링/AI 생성 같은 장시간 작업은 별도 Worker가 필수
+
+    database:
+      primary: "Supabase (PostgreSQL 16)"
+      orm: "Prisma"
+      storage: "Supabase Storage (미디어 파일)"
+      cache: "Vercel KV (Redis) - 세션/임시 데이터"
+
+    deployment:
+      frontend: "Vercel"
+      worker: "Railway 또는 Render (Docker)"
+      cdn: "Vercel Edge Network"
+      domain: "videoforge.app (예정)"
+
+# ============================================================
+# 2. 외부 API 통합
+# ============================================================
+external_apis:
+
+  gemini:
+    provider: "Google"
+    models:
+      image_generation:
+        model: "gemini-2.5-flash (Nano Banana)"
+        purpose: "씬별 이미지 생성"
+        input: "텍스트 프롬프트 + 스타일 시드"
+        output: "PNG/JPEG 이미지"
+        rate_limit: "분당 15 요청 (기본 티어)"
+        cost: "이미지당 약 $0.02-0.04"
+      video_generation:
+        model: "Veo 3"
+        purpose: "씬별 영상 클립 생성"
+        input: "텍스트 프롬프트 + 참조 이미지"
+        output: "MP4 클립 (3-10초)"
+        rate_limit: "분당 5 요청 (기본 티어)"
+        cost: "클립당 약 $0.10-0.50"
+    auth: "API Key (서버사이드 전용)"
+
+  tts:
+    provider: "Qwen3 TTS 1.7B (자체 호스팅)"
+    hosting_options:
+      option_a:
+        name: "자체 GPU 서버"
+        spec: "NVIDIA T4 이상"
+        platform: "RunPod / Vast.ai / Lambda"
+        cost: "시간당 $0.2-0.8"
+      option_b:
+        name: "HuggingFace Inference Endpoints"
+        spec: "GPU Endpoint (dedicated)"
+        cost: "시간당 $0.6-1.2"
+    input: "텍스트 (한국어/영어)"
+    output: "WAV/MP3 오디오 + 타임스탬프(단어별)"
+    features:
+      - "다국어 지원 (한국어, 영어, 일본어, 중국어)"
+      - "음성 스타일 조절 (속도, 톤, 감정)"
+      - "단어 레벨 타임스탬프 출력 (자막 싱크용)"
+
+  web_search:
+    provider: "Brave Search API 또는 Google Custom Search"
+    purpose: "대본 생성을 위한 기존 콘텐츠 리서치"
+    cost: "월 $9 (Brave) / $5 per 1000 queries (Google)"
+
+  llm:
+    provider: "Anthropic Claude API"
+    model: "claude-sonnet-4-6"
+    purpose:
+      - "대본 생성 및 편집"
+      - "씬 분할 및 프롬프트 생성"
+      - "성공 요인 체크리스트 검증"
+      - "스타일 분석 및 추천"
+    cost: "$3/$15 per 1M tokens (input/output)"
+
+# ============================================================
+# 3. 핵심 파이프라인 설계
+# ============================================================
+pipelines:
+
+  script_generation:
+    name: "대본 생성 파이프라인"
+    trigger: "사용자가 주제/키워드 입력 후 '대본 생성' 클릭"
+    steps:
+      - step: 1
+        name: "웹 리서치"
+        action: "Brave Search API로 관련 콘텐츠 수집"
+        input: "키워드, 콘텐츠 타입"
+        output: "상위 10개 콘텐츠 요약"
+        timeout: "30초"
+      - step: 2
+        name: "콘텐츠 분석"
+        action: "Claude로 수집된 콘텐츠 분석 + 차별화 포인트 도출"
+        input: "수집된 콘텐츠, 사용자 선호도"
+        output: "콘텐츠 전략 + 아웃라인"
+        timeout: "15초"
+      - step: 3
+        name: "대본 작성"
+        action: "Claude로 전체 대본 생성"
+        input: "아웃라인, 콘텐츠 타입, 타겟 길이"
+        output: "씬 분할된 대본 (JSON)"
+        timeout: "30초"
+      - step: 4
+        name: "품질 검증"
+        action: "성공 요인 체크리스트 자동 평가"
+        input: "생성된 대본"
+        output: "점수 + 개선 제안"
+        timeout: "10초"
+
+  scene_generation:
+    name: "씬 생성 파이프라인"
+    trigger: "사용자가 대본 확정 후 '씬 생성' 클릭"
+    steps:
+      - step: 1
+        name: "프롬프트 생성"
+        action: "각 씬의 대본 + 스타일 설정을 이미지/영상 생성 프롬프트로 변환"
+        input: "씬 대본, 스타일 프리셋/레퍼런스"
+        output: "씬별 Gemini 프롬프트"
+      - step: 2
+        name: "이미지 생성 (선택)"
+        action: "Nano Banana로 씬별 이미지 생성"
+        input: "프롬프트"
+        output: "씬당 2-3개 이미지 후보"
+        parallel: true
+      - step: 3
+        name: "영상 생성 (선택)"
+        action: "Veo 3로 씬별 영상 클립 생성"
+        input: "프롬프트 + 참조 이미지"
+        output: "씬당 3-10초 영상 클립"
+        parallel: true
+      - step: 4
+        name: "사용자 검토"
+        action: "생성된 씬 미리보기 + 개별 재생성/선택"
+        ui: "그리드 뷰 + 교체 버튼"
+
+  rendering:
+    name: "렌더링 파이프라인"
+    trigger: "사용자가 씬 확정 후 '렌더링' 클릭"
+    steps:
+      - step: 1
+        name: "TTS 생성"
+        action: "Qwen3 TTS로 대본 음성 생성 + 단어별 타임스탬프"
+        input: "씬별 대본 텍스트, 음성 설정"
+        output: "WAV 오디오 + 타임스탬프 JSON"
+      - step: 2
+        name: "자막 생성"
+        action: "TTS 타임스탬프 기반 SRT/ASS 자막 파일 생성"
+        input: "타임스탬프 JSON, 자막 스타일"
+        output: "자막 파일 (ASS 포맷 - 유튜브 스타일)"
+      - step: 3
+        name: "FFmpeg 렌더링"
+        action: "씬 연결 + 자막 오버레이 + 오디오 믹싱"
+        input: "씬 이미지/영상, 오디오, 자막, 트랜지션 설정"
+        output: "최종 MP4 영상"
+        worker: true
+        estimated_time: "숏폼 2-5분, 롱폼 10-30분"
+      - step: 4
+        name: "인코딩 & 업로드"
+        action: "최종 영상 인코딩 후 Supabase Storage 업로드"
+        output: "다운로드 URL (24시간 유효)"
+
+# ============================================================
+# 4. API 엔드포인트 설계
+# ============================================================
+api_endpoints:
+
+  auth:
+    - method: POST
+      path: "/api/auth/signup"
+      description: "회원가입 (이메일/OAuth)"
+    - method: POST
+      path: "/api/auth/login"
+      description: "로그인"
+    - method: POST
+      path: "/api/auth/logout"
+      description: "로그아웃"
+
+  projects:
+    - method: GET
+      path: "/api/projects"
+      description: "프로젝트 목록 조회"
+      query: "page, limit, status"
+    - method: POST
+      path: "/api/projects"
+      description: "프로젝트 생성"
+      body: "{ topic, contentType, targetPlatform }"
+    - method: GET
+      path: "/api/projects/:id"
+      description: "프로젝트 상세 조회"
+    - method: PATCH
+      path: "/api/projects/:id"
+      description: "프로젝트 수정"
+    - method: DELETE
+      path: "/api/projects/:id"
+      description: "프로젝트 삭제"
+
+  scripts:
+    - method: POST
+      path: "/api/projects/:id/scripts/generate"
+      description: "AI 대본 생성 요청 (비동기)"
+      body: "{ keywords[], sourceUrl?, sourceText?, preferences }"
+      response: "{ jobId }"
+    - method: GET
+      path: "/api/projects/:id/scripts"
+      description: "대본 조회"
+    - method: PATCH
+      path: "/api/projects/:id/scripts"
+      description: "대본 수정 (사용자 편집)"
+    - method: POST
+      path: "/api/projects/:id/scripts/validate"
+      description: "성공 요인 체크리스트 검증"
+
+  styles:
+    - method: GET
+      path: "/api/styles/presets"
+      description: "스타일 프리셋 목록"
+    - method: POST
+      path: "/api/projects/:id/styles"
+      description: "스타일 설정 (프리셋 선택 또는 레퍼런스 업로드)"
+      body: "{ presetId?, referenceImage? }"
+    - method: POST
+      path: "/api/styles/analyze"
+      description: "레퍼런스 이미지 스타일 분석"
+
+  scenes:
+    - method: POST
+      path: "/api/projects/:id/scenes/generate"
+      description: "전체 씬 이미지/영상 생성 요청 (비동기)"
+      response: "{ jobId }"
+    - method: GET
+      path: "/api/projects/:id/scenes"
+      description: "씬 목록 조회"
+    - method: POST
+      path: "/api/projects/:id/scenes/:sceneId/regenerate"
+      description: "특정 씬 재생성"
+    - method: PATCH
+      path: "/api/projects/:id/scenes/:sceneId"
+      description: "씬 수정 (순서, 선택된 미디어 변경)"
+
+  rendering:
+    - method: POST
+      path: "/api/projects/:id/render"
+      description: "최종 렌더링 요청 (비동기)"
+      body: "{ resolution, fps, subtitleStyle, voiceSettings }"
+      response: "{ jobId }"
+    - method: GET
+      path: "/api/projects/:id/render/status"
+      description: "렌더링 진행 상태 조회"
+
+  export:
+    - method: GET
+      path: "/api/projects/:id/export"
+      description: "완성 영상 다운로드 URL"
+    - method: POST
+      path: "/api/projects/:id/export/youtube"
+      description: "유튜브 직접 업로드 (P2)"
+
+  jobs:
+    - method: GET
+      path: "/api/jobs/:jobId"
+      description: "비동기 작업 상태 조회"
+      response: "{ status, progress, result?, error? }"
+
+# ============================================================
+# 5. 보안 설계
+# ============================================================
+security:
+  authentication:
+    method: "Supabase Auth (JWT)"
+    providers: ["email/password", "Google OAuth", "GitHub OAuth"]
+    session: "httpOnly cookie + refresh token rotation"
+
+  authorization:
+    model: "Row Level Security (Supabase RLS)"
+    rules:
+      - "사용자는 자신의 프로젝트만 CRUD 가능"
+      - "미디어 파일은 Signed URL로만 접근 (만료 시간 설정)"
+      - "API Key는 서버사이드에서만 사용 (환경변수)"
+
+  api_protection:
+    - "Rate limiting: 인증 사용자 분당 60회, 비인증 분당 10회"
+    - "CORS: 허용 도메인 화이트리스트"
+    - "Input validation: zod 스키마 검증"
+    - "API Key 노출 방지: 모든 외부 API 호출은 서버사이드"
+
+  data:
+    - "미디어 파일 30일 후 자동 삭제 (Free 티어)"
+    - "사용자 데이터 암호화 (at rest: Supabase 기본)"
+    - "결제 정보: Stripe 위임 (PCI DSS 회피)"
+
+# ============================================================
+# 6. 성능 요구사항
+# ============================================================
+performance:
+  frontend:
+    lcp: "< 2.5초"
+    fid: "< 100ms"
+    cls: "< 0.1"
+
+  api:
+    p95_latency: "< 500ms (동기 API)"
+    script_generation: "< 60초 (대본 생성)"
+    scene_image: "< 30초/씬 (이미지 생성)"
+    scene_video: "< 120초/씬 (영상 생성)"
+    full_render_short: "< 5분 (숏폼 60초)"
+    full_render_long: "< 30분 (롱폼 10분)"
+
+  storage:
+    max_project_size: "5GB (Pro), 1GB (Free)"
+    concurrent_renders: "3 (Pro), 1 (Free)"
+
+# ============================================================
+# 7. 모니터링 & 에러 처리
+# ============================================================
+monitoring:
+  error_tracking: "Sentry"
+  logging: "구조화 로그 (JSON format → Vercel Logs)"
+  uptime: "Better Stack 또는 Checkly"
+  alerts:
+    - "API 에러율 > 5% → Slack 알림"
+    - "렌더링 실패율 > 10% → 즉시 알림"
+    - "외부 API 응답시간 > 30초 → 경고"
+
+  error_handling:
+    strategy: "Graceful degradation + Retry with backoff"
+    retry_policy:
+      ai_generation: "최대 3회, exponential backoff (2s, 4s, 8s)"
+      rendering: "최대 2회, 실패 시 사용자에게 재시도 옵션 제공"
+      external_api: "최대 3회, circuit breaker 패턴 (5분 cooldown)"

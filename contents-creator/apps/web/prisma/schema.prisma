@@ -1,0 +1,305 @@
+// ============================================================
+// VideoForge Prisma Schema
+// Database: Supabase (PostgreSQL 16)
+// ORM: Prisma 6.x
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// Enums
+// ============================================================
+
+enum content_type {
+  short_form
+  long_form
+}
+
+enum project_status {
+  draft
+  scripting
+  styling
+  generating
+  editing
+  rendering
+  completed
+  failed
+}
+
+enum scene_media_type {
+  image
+  video
+}
+
+enum job_status {
+  pending
+  processing
+  completed
+  failed
+  cancelled
+}
+
+enum subscription_tier {
+  free
+  pro
+  enterprise
+}
+
+enum export_resolution {
+  p720  @map("720p")
+  p1080 @map("1080p")
+  k4    @map("4k")
+}
+
+// ============================================================
+// Models
+// ============================================================
+
+// 1. Users (Supabase Auth 확장)
+model profiles {
+  id                     String            @id @db.Uuid
+  display_name           String            @default("")
+  avatar_url             String?
+  subscription           subscription_tier @default(free)
+  default_voice          Json              @default("{}")
+  default_style          String?           @db.Uuid
+  monthly_renders        Int               @default(0)
+  monthly_reset          DateTime          @default(dbgenerated("date_trunc('month', now()) + interval '1 month'")) @db.Timestamptz
+  gemini_api_key_encrypted String?
+  created_at             DateTime          @default(now()) @db.Timestamptz
+  updated_at             DateTime          @default(now()) @updatedAt @db.Timestamptz
+
+  // Relations
+  projects        projects[]
+  style_presets   style_presets[]
+  templates       templates[]
+
+  @@index([subscription], name: "idx_profiles_subscription")
+}
+
+// 2. Projects
+model projects {
+  id              String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id         String         @db.Uuid
+  title           String
+  topic           String
+  content_type    content_type
+  target_platform String[]       @default([])
+  status          project_status @default(draft)
+  duration_sec    Int?
+  scene_count     Int            @default(0)
+  export_settings Json           @default("{}")
+  output_url      String?
+  output_expires  DateTime?      @db.Timestamptz
+  thumbnail_url   String?
+  created_at      DateTime       @default(now()) @db.Timestamptz
+  updated_at      DateTime       @default(now()) @updatedAt @db.Timestamptz
+
+  // Relations
+  user            profiles       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  scripts         scripts[]
+  project_styles  project_styles?
+  scenes          scenes[]
+  audio_tracks    audio_tracks[]
+  subtitles       subtitles[]
+  jobs            jobs[]
+
+  @@index([user_id], name: "idx_projects_user")
+  @@index([status], name: "idx_projects_status")
+  @@index([created_at(sort: Desc)], name: "idx_projects_created")
+}
+
+// 3. Scripts
+model scripts {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id      String   @db.Uuid
+  version         Int      @default(1)
+  source_type     String   @default("keyword")
+  source_keywords String[]
+  source_url      String?
+  source_text     String?
+  research_data   Json     @default("{}")
+  full_script     String   @default("")
+  scenes_json     Json     @default("[]")
+  quality_score   Json     @default("{}")
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.Timestamptz
+
+  // Relations
+  project         projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id], name: "idx_scripts_project")
+}
+
+// 4. Style Presets
+model style_presets {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name            String
+  category        String
+  description     String?
+  thumbnail_url   String?
+  prompt_prefix   String   @default("")
+  prompt_suffix   String   @default("")
+  negative_prompt String   @default("")
+  style_params    Json     @default("{}")
+  is_system       Boolean  @default(false)
+  user_id         String?  @db.Uuid
+  created_at      DateTime @default(now()) @db.Timestamptz
+
+  // Relations
+  user            profiles?       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  project_styles  project_styles[]
+  templates       templates[]
+
+  @@index([category], name: "idx_style_presets_category")
+  @@index([is_system], name: "idx_style_presets_system")
+}
+
+// 5. Project Styles
+model project_styles {
+  id                   String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id           String   @unique @db.Uuid
+  preset_id            String?  @db.Uuid
+  reference_urls       String[] @default([])
+  analyzed_style       Json     @default("{}")
+  final_prompt_prefix  String   @default("")
+  final_prompt_suffix  String   @default("")
+  final_negative_prompt String  @default("")
+  created_at           DateTime @default(now()) @db.Timestamptz
+  updated_at           DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  // Relations
+  project              projects      @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  preset               style_presets? @relation(fields: [preset_id], references: [id])
+}
+
+// 6. Scenes
+model scenes {
+  id                String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id        String           @db.Uuid
+  scene_number      Int
+  narration         String           @default("")
+  visual_desc       String           @default("")
+  duration_sec      Decimal          @default(5.0) @db.Decimal(5, 2)
+  generation_prompt String?
+  media_type        scene_media_type @default(image)
+  selected_media_id String?          @db.Uuid
+  transition        String           @default("fade")
+  created_at        DateTime         @default(now()) @db.Timestamptz
+  updated_at        DateTime         @default(now()) @updatedAt @db.Timestamptz
+
+  // Relations
+  project           projects         @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  scene_media       scene_media[]
+
+  @@index([project_id, scene_number], name: "idx_scenes_project")
+}
+
+// 7. Scene Media
+model scene_media {
+  id                String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  scene_id          String           @db.Uuid
+  media_type        scene_media_type
+  storage_path      String
+  url               String
+  thumbnail_url     String?
+  prompt_used       String
+  generation_seed   String?
+  width             Int?
+  height            Int?
+  duration_sec      Decimal?         @db.Decimal(5, 2)
+  file_size_bytes   BigInt?
+  is_selected       Boolean          @default(false)
+  created_at        DateTime         @default(now()) @db.Timestamptz
+
+  // Relations
+  scene             scenes           @relation(fields: [scene_id], references: [id], onDelete: Cascade)
+
+  @@index([scene_id], name: "idx_scene_media_scene")
+}
+
+// 8. Audio Tracks
+model audio_tracks {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id      String   @db.Uuid
+  storage_path    String
+  url             String
+  duration_sec    Decimal  @db.Decimal(8, 2)
+  voice_settings  Json     @default("{}")
+  word_timestamps Json     @default("[]")
+  created_at      DateTime @default(now()) @db.Timestamptz
+
+  // Relations
+  project         projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id], name: "idx_audio_tracks_project")
+}
+
+// 9. Subtitles
+model subtitles {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id      String   @db.Uuid
+  format          String   @default("ass")
+  style_settings  Json     @default("{}")
+  content         String   @default("")
+  storage_path    String?
+  created_at      DateTime @default(now()) @db.Timestamptz
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  // Relations
+  project         projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@unique([project_id, format])
+}
+
+// 10. Jobs
+model jobs {
+  id            String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  project_id    String     @db.Uuid
+  job_type      String
+  status        job_status @default(pending)
+  progress      Int        @default(0)
+  total_steps   Int        @default(0)
+  current_step  Int        @default(0)
+  input_data    Json       @default("{}")
+  output_data   Json       @default("{}")
+  error_message String?
+  retry_count   Int        @default(0)
+  max_retries   Int        @default(3)
+  started_at    DateTime?  @db.Timestamptz
+  completed_at  DateTime?  @db.Timestamptz
+  created_at    DateTime   @default(now()) @db.Timestamptz
+
+  // Relations
+  project       projects   @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([project_id], name: "idx_jobs_project")
+  @@index([status], name: "idx_jobs_status")
+}
+
+// 11. Templates
+model templates {
+  id              String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id         String       @db.Uuid
+  name            String
+  description     String?
+  content_type    content_type?
+  style_preset_id String?      @db.Uuid
+  voice_settings  Json         @default("{}")
+  subtitle_style  Json         @default("{}")
+  export_settings Json         @default("{}")
+  created_at      DateTime     @default(now()) @db.Timestamptz
+  updated_at      DateTime     @default(now()) @updatedAt @db.Timestamptz
+
+  // Relations
+  user            profiles       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  style_preset    style_presets? @relation(fields: [style_preset_id], references: [id])
+
+  @@index([user_id], name: "idx_templates_user")
+}

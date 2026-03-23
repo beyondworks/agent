@@ -1,0 +1,405 @@
+================================================================
+VideoForge Business Logic - 핵심 알고리즘 의사 코드
+================================================================
+
+================================================================
+ALGORITHM 1: 대본 생성 파이프라인 (ScriptGenerationPipeline)
+================================================================
+
+INPUT:
+  - keywords: string[]          // 사용자 입력 키워드
+  - content_type: "short_form" | "long_form"
+  - source_url?: string         // 참조 URL (선택)
+  - source_text?: string        // 참조 텍스트 (선택)
+  - language: string            // 기본 "ko"
+
+OUTPUT:
+  - script: Script              // 씬 분할된 대본
+  - quality_score: QualityScore // 품질 점수
+
+PROCESS:
+  1. RESEARCH (웹 리서치)
+     IF source_url EXISTS:
+       raw_content = fetch_and_extract(source_url)
+       analysis = LLM.analyze(raw_content, "핵심 주제, 구조, 강점, 약점 분석")
+     ELSE:
+       search_results = web_search(keywords, limit=10)
+       FOR EACH result IN search_results:
+         summaries.append(LLM.summarize(result.content, max_tokens=500))
+       analysis = LLM.synthesize(summaries, "트렌드, 공통 주제, 차별화 기회 도출")
+
+  2. OUTLINE (아웃라인 생성)
+     target_duration = IF content_type == "short_form" THEN 30-60초 ELSE 분 단위 계산
+     target_word_count = target_duration * 2.5  // 한국어 기준 초당 2.5어절
+
+     outline = LLM.generate_outline({
+       analysis: analysis,
+       keywords: keywords,
+       target_duration: target_duration,
+       structure: IF content_type == "short_form"
+                  THEN ["hook(3초)", "problem(10초)", "solution(30초)", "cta(10초)"]
+                  ELSE ["hook(15초)", "intro(60초)", "body_sections(N개)", "conclusion(60초)", "cta(30초)"]
+     })
+
+  3. SCRIPT WRITING (대본 작성)
+     full_script = LLM.write_script({
+       outline: outline,
+       tone: "친근하고 전문적",
+       word_count: target_word_count,
+       rules: [
+         "첫 문장은 반드시 질문 또는 충격적 통계로 시작",
+         "각 씬 전환 시 자연스러운 연결어 사용",
+         "전문 용어 사용 시 즉시 쉬운 설명 추가",
+         "CTA는 구체적 행동 지시 (구독, 좋아요, 댓글 등)"
+       ]
+     })
+
+  4. SCENE SPLITTING (씬 분할)
+     scenes = []
+     FOR EACH paragraph IN full_script:
+       scene = {
+         scene_id: auto_increment,
+         narration: paragraph.text,
+         visual_desc: LLM.generate_visual_description(paragraph.text),
+         duration_sec: calculate_duration(paragraph.text, language),
+         keywords: extract_keywords(paragraph.text)
+       }
+       scenes.append(scene)
+
+     // 씬 길이 검증
+     total_duration = SUM(scene.duration_sec FOR scene IN scenes)
+     IF total_duration > target_duration * 1.2:
+       scenes = LLM.trim_scenes(scenes, target_duration)
+     IF total_duration < target_duration * 0.8:
+       scenes = LLM.expand_scenes(scenes, target_duration)
+
+  5. QUALITY CHECK (품질 검증)
+     quality_score = evaluate_script(full_script, scenes)
+     // evaluate_script → ALGORITHM 2 참조
+
+  RETURN { script: { full_script, scenes }, quality_score }
+
+
+================================================================
+ALGORITHM 2: 대본 품질 평가 (ScriptQualityEvaluator)
+================================================================
+
+INPUT:
+  - script: string              // 전체 대본 텍스트
+  - scenes: Scene[]             // 씬 목록
+  - content_type: string
+
+OUTPUT:
+  - score: QualityScore         // { total: 0-100, categories: {...} }
+  - suggestions: string[]       // 개선 제안
+
+PROCESS:
+  categories = {}
+
+  1. HOOK SCORE (첫 3초 훅) [0-20점]
+     first_scene = scenes[0]
+     hook_patterns = [
+       "질문으로 시작하는가?",
+       "놀라운 통계/사실을 포함하는가?",
+       "시청자의 pain point를 언급하는가?",
+       "호기심을 유발하는 미완성 문장이 있는가?"
+     ]
+     categories.hook = LLM.evaluate(first_scene.narration, hook_patterns, max_score=20)
+
+  2. STORYTELLING ARC (스토리 구조) [0-25점]
+     arc_checklist = [
+       "문제 제기가 명확한가?",
+       "긴장-이완의 리듬이 있는가?",
+       "전환이 자연스러운가?",
+       "클라이맥스(핵심 인사이트)가 명확한가?",
+       "결론이 만족스러운가?"
+     ]
+     categories.storytelling = LLM.evaluate(script, arc_checklist, max_score=25)
+
+  3. INFORMATION DENSITY (정보 밀도) [0-20점]
+     total_duration = SUM(scene.duration_sec)
+     key_points = LLM.extract_key_points(script)
+     density = len(key_points) / (total_duration / 60)  // 분당 키포인트 수
+
+     IF content_type == "short_form":
+       // 숏폼: 분당 3-5개 키포인트 적정
+       categories.density = map_to_score(density, ideal_min=3, ideal_max=5, max_score=20)
+     ELSE:
+       // 롱폼: 분당 2-3개 키포인트 적정
+       categories.density = map_to_score(density, ideal_min=2, ideal_max=3, max_score=20)
+
+  4. CTA EFFECTIVENESS (CTA 효과) [0-15점]
+     cta_checklist = [
+       "CTA가 존재하는가?",
+       "CTA가 구체적 행동을 지시하는가?",
+       "CTA의 위치가 적절한가? (마지막 10%)"
+     ]
+     categories.cta = LLM.evaluate(script, cta_checklist, max_score=15)
+
+  5. VISUAL COMPATIBILITY (영상화 적합성) [0-20점]
+     FOR EACH scene IN scenes:
+       visual_score += evaluate_visual_desc(scene.visual_desc)
+       // - 구체적인 시각 요소가 포함되어 있는가?
+       // - 추상적 개념만 있어 영상화가 어렵지 않은가?
+       // - 씬 간 시각적 다양성이 있는가?
+     categories.visual = (visual_score / len(scenes)) * 20
+
+  total = SUM(categories.values())
+
+  suggestions = []
+  IF categories.hook < 12: suggestions.append("첫 3초 훅을 강화하세요. 질문이나 놀라운 통계로 시작해보세요.")
+  IF categories.storytelling < 15: suggestions.append("스토리 구조를 점검하세요. 문제→해결→결론 흐름이 명확한지 확인하세요.")
+  IF categories.density < 12: suggestions.append("정보 밀도를 조절하세요. 핵심 메시지에 집중하고 불필요한 내용을 줄이세요.")
+  IF categories.cta < 9: suggestions.append("CTA를 추가하거나 더 구체적으로 만드세요.")
+  IF categories.visual < 12: suggestions.append("시각적 설명을 보강하세요. 각 씬에 구체적인 이미지/장면을 추가하세요.")
+
+  RETURN { score: { total, categories }, suggestions }
+
+
+================================================================
+ALGORITHM 3: 스타일 일관성 프롬프트 체이닝 (StyleConsistencyChain)
+================================================================
+
+INPUT:
+  - scenes: Scene[]
+  - style: ProjectStyle         // 프리셋 또는 커스텀 스타일
+  - reference_images?: Image[]  // 레퍼런스 이미지
+
+OUTPUT:
+  - prompts: ScenePrompt[]      // 씬별 최종 프롬프트
+
+PROCESS:
+  1. STYLE EXTRACTION
+     IF reference_images EXISTS:
+       style_desc = LLM.analyze_images(reference_images, {
+         extract: ["색상 팔레트", "조명 스타일", "구도", "질감", "분위기"]
+       })
+       prompt_prefix = style_desc.to_prompt_prefix()
+       prompt_suffix = style_desc.to_prompt_suffix()
+       negative_prompt = style_desc.to_negative_prompt()
+     ELSE:
+       prompt_prefix = style.preset.prompt_prefix
+       prompt_suffix = style.preset.prompt_suffix
+       negative_prompt = style.preset.negative_prompt
+
+  2. SEED GENERATION (일관성을 위한 시드)
+     // 첫 씬 생성 후 해당 결과를 이후 씬의 참조로 사용
+     base_seed = generate_random_seed()
+     character_descriptions = {}  // 반복 등장 캐릭터/요소 설명 캐시
+
+  3. PROMPT GENERATION (씬별 프롬프트)
+     prompts = []
+     FOR EACH scene IN scenes:
+       // 캐릭터/요소 일관성 유지
+       entities = extract_entities(scene.visual_desc)
+       FOR entity IN entities:
+         IF entity IN character_descriptions:
+           scene.visual_desc = inject_description(scene.visual_desc, entity, character_descriptions[entity])
+         ELSE:
+           desc = LLM.generate_entity_description(entity, style_desc)
+           character_descriptions[entity] = desc
+
+       prompt = {
+         text: f"{prompt_prefix}, {scene.visual_desc}, {prompt_suffix}",
+         negative: negative_prompt,
+         seed: base_seed + scene.scene_number,  // 시드 오프셋으로 다양성 확보
+         reference_image: IF scene.scene_number > 1
+                          THEN prompts[scene.scene_number - 2].result_image  // 직전 씬 결과 참조
+                          ELSE null,
+         aspect_ratio: IF content_type == "short_form" THEN "9:16" ELSE "16:9"
+       }
+       prompts.append(prompt)
+
+  RETURN prompts
+
+
+================================================================
+ALGORITHM 4: TTS-자막 싱크 엔진 (TTSSubtitleSync)
+================================================================
+
+INPUT:
+  - scenes: Scene[]             // 씬별 나레이션
+  - voice_settings: VoiceConfig // 음성 설정
+  - subtitle_style: SubStyle    // 자막 스타일
+
+OUTPUT:
+  - audio: AudioFile            // WAV/MP3
+  - subtitle: SubtitleFile      // ASS 포맷
+  - timeline: Timeline          // 씬-오디오 매핑
+
+PROCESS:
+  1. TTS GENERATION (음성 생성)
+     audio_segments = []
+     word_timestamps = []
+     current_offset = 0.0
+
+     FOR EACH scene IN scenes:
+       // Qwen3 TTS에 씬 나레이션 전달
+       result = qwen3_tts.synthesize({
+         text: scene.narration,
+         language: voice_settings.language,
+         speed: voice_settings.speed,
+         voice_id: voice_settings.voice_id
+       })
+
+       // 타임스탬프 오프셋 적용
+       FOR word_ts IN result.word_timestamps:
+         word_timestamps.append({
+           word: word_ts.word,
+           start: word_ts.start + current_offset,
+           end: word_ts.end + current_offset,
+           scene_id: scene.scene_id
+         })
+
+       audio_segments.append(result.audio)
+       scene.actual_duration = result.duration
+       current_offset += result.duration
+
+       // 씬 간 무음 삽입 (자연스러운 전환)
+       silence_duration = 0.5  // 초
+       audio_segments.append(generate_silence(silence_duration))
+       current_offset += silence_duration
+
+  2. AUDIO MERGE (오디오 합성)
+     audio = concat_audio(audio_segments)
+
+  3. SUBTITLE GENERATION (자막 생성)
+     // 유튜브 스타일: 2-4단어씩 그룹핑
+     subtitle_events = []
+     word_buffer = []
+
+     FOR word_ts IN word_timestamps:
+       word_buffer.append(word_ts)
+
+       // 그룹핑 조건: 4단어 또는 자연스러운 끊김점
+       IF len(word_buffer) >= 4 OR is_sentence_break(word_ts.word):
+         event = {
+           start: word_buffer[0].start,
+           end: word_buffer[-1].end,
+           text: join_words(word_buffer),
+           style: subtitle_style
+         }
+         subtitle_events.append(event)
+         word_buffer = []
+
+     // 남은 단어 처리
+     IF word_buffer:
+       subtitle_events.append(create_event(word_buffer))
+
+     subtitle = generate_ass_file(subtitle_events, subtitle_style)
+
+  4. TIMELINE MAPPING (씬-오디오 매핑)
+     timeline = []
+     FOR EACH scene IN scenes:
+       scene_words = FILTER(word_timestamps, ws => ws.scene_id == scene.scene_id)
+       timeline.append({
+         scene_id: scene.scene_id,
+         audio_start: scene_words[0].start,
+         audio_end: scene_words[-1].end,
+         media_file: scene.selected_media,
+         transition: scene.transition
+       })
+
+  RETURN { audio, subtitle, timeline }
+
+
+================================================================
+ALGORITHM 5: FFmpeg 렌더링 파이프라인 (RenderPipeline)
+================================================================
+
+INPUT:
+  - timeline: Timeline
+  - audio: AudioFile
+  - subtitle: SubtitleFile
+  - settings: ExportSettings    // { resolution, fps, format }
+
+OUTPUT:
+  - video: VideoFile            // 최종 MP4
+
+PROCESS:
+  1. SCENE PREPARATION (씬 준비)
+     FOR EACH entry IN timeline:
+       IF entry.media IS image:
+         // 이미지를 영상 클립으로 변환 (Ken Burns 효과 + 지정 길이)
+         duration = entry.audio_end - entry.audio_start
+         clip = ffmpeg_image_to_video(entry.media_file, duration, {
+           effect: "ken_burns",  // 부드러운 줌인/줌아웃
+           resolution: settings.resolution
+         })
+       ELSE:
+         // 영상 클립 길이 조절
+         clip = ffmpeg_trim_or_loop(entry.media_file, duration)
+
+       clips.append({ clip, transition: entry.transition })
+
+  2. SCENE CONCATENATION (씬 연결)
+     // 트랜지션 적용하며 순차 연결
+     concat_list = []
+     FOR i, clip IN enumerate(clips):
+       concat_list.append(clip.clip)
+       IF i < len(clips) - 1:
+         concat_list.append(create_transition(clip.transition, duration=0.5))
+
+     raw_video = ffmpeg_concat(concat_list)
+
+  3. OVERLAY (자막 + 오디오)
+     // ASS 자막 하드 오버레이 + 오디오 믹싱
+     final_video = ffmpeg_complex_filter({
+       video_input: raw_video,
+       audio_input: audio,
+       subtitle_input: subtitle,
+       filters: [
+         "ass={subtitle_path}",              // 자막 오버레이
+         "scale={width}:{height}",           // 해상도 조절
+         "fps={settings.fps}"               // FPS 설정
+       ],
+       output_codec: "libx264",
+       audio_codec: "aac",
+       quality: "crf=18",                   // 고품질
+       preset: "medium"
+     })
+
+  4. OUTPUT
+     upload_to_storage(final_video)
+     generate_thumbnail(final_video, timestamp=2.0)
+
+  RETURN final_video
+
+
+================================================================
+ALGORITHM 6: 사용량 제한 & 과금 로직 (UsageLimiter)
+================================================================
+
+INPUT:
+  - user: User
+  - action: "script" | "scene_image" | "scene_video" | "render"
+
+OUTPUT:
+  - allowed: boolean
+  - remaining: int
+
+PROCESS:
+  limits = {
+    free:       { monthly_renders: 3,   monthly_scenes: 30,  max_duration: 60,   concurrent: 1 },
+    pro:        { monthly_renders: 50,  monthly_scenes: 500, max_duration: 1800, concurrent: 3 },
+    enterprise: { monthly_renders: -1,  monthly_scenes: -1,  max_duration: 3600, concurrent: 10 }
+  }
+
+  tier_limits = limits[user.subscription]
+
+  // 월간 리셋 체크
+  IF NOW() > user.monthly_reset:
+    user.monthly_renders = 0
+    user.monthly_reset = date_trunc('month', NOW()) + INTERVAL '1 month'
+    SAVE user
+
+  // 제한 체크
+  IF tier_limits.monthly_renders != -1 AND user.monthly_renders >= tier_limits.monthly_renders:
+    RETURN { allowed: false, remaining: 0, message: "월간 렌더링 한도 초과. Pro로 업그레이드하세요." }
+
+  // 동시 작업 체크
+  active_jobs = COUNT(jobs WHERE user_id = user.id AND status IN ('pending', 'processing'))
+  IF active_jobs >= tier_limits.concurrent:
+    RETURN { allowed: false, remaining: tier_limits.concurrent - active_jobs, message: "동시 작업 한도 초과. 진행 중인 작업 완료 후 시도하세요." }
+
+  RETURN { allowed: true, remaining: tier_limits.monthly_renders - user.monthly_renders }
