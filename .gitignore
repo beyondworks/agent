@@ -1,0 +1,14 @@
+node_modules/
+out/
+dist/
+.cache/
+.next/
+storybook-static/
+*.mp4
+*.wav
+*.m4a
+*.png
+*.jpg
+.env*
+.DS_Store
+voice/

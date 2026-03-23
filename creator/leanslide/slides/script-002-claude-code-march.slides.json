@@ -1,0 +1,177 @@
+{
+  "meta": {
+    "title": "Claude Code가 이번 주에 조용히 바꿔놓은 것들",
+    "visualStyle": "dark-neon",
+    "theme": {
+      "bg": "#0a0a0a",
+      "accent": "#00ff88",
+      "accent2": "#a855f7",
+      "accent3": "#ff4444"
+    },
+    "font": "Pretendard",
+    "totalSlides": 7,
+    "estimatedDuration": 360
+  },
+  "slides": [
+    {
+      "id": 1,
+      "layout": "title",
+      "duration": 4,
+      "content": {
+        "label": "WEEKLY UPDATE",
+        "title": "코드 도구에서 동료로",
+        "subtitle": "Claude Code 2026년 3월 업데이트 해석"
+      },
+      "animation": {
+        "entrance": "fade",
+        "style": "fade",
+        "staggerDelay": 5
+      }
+    },
+    {
+      "id": 2,
+      "layout": "concept",
+      "duration": 8,
+      "content": {
+        "label": "VOICE MODE",
+        "title": "말로 지시하는 시대",
+        "description": "/voice → 스페이스바 → 음성 인식 → 실행",
+        "diagram": {
+          "type": "flow",
+          "lightFlow": true
+        },
+        "nodes": [
+          { "id": "user", "label": "사용자", "x": 15, "y": 50, "color": "neutral" },
+          { "id": "voice", "label": "음성 입력", "x": 38, "y": 30, "color": "accent" },
+          { "id": "claude", "label": "Claude Code", "x": 62, "y": 50, "color": "purple" },
+          { "id": "result", "label": "실행 결과", "x": 85, "y": 50, "color": "accent" }
+        ],
+        "edges": [
+          { "from": "user", "to": "voice", "label": "/voice", "animated": true },
+          { "from": "voice", "to": "claude", "label": "STT", "animated": true },
+          { "from": "claude", "to": "result", "label": "실행", "animated": true }
+        ]
+      },
+      "animation": {
+        "entrance": "stagger-up",
+        "style": "flow",
+        "staggerDelay": 5
+      }
+    },
+    {
+      "id": 3,
+      "layout": "process",
+      "duration": 8,
+      "content": {
+        "title": "반복 업무를 맡긴다",
+        "checklistStyle": true,
+        "checklist": [
+          { "text": "/loop 5m check the deploy", "checked": true },
+          { "text": "/loop 30s run tests", "checked": true },
+          { "text": "/loop 1h check issues", "checked": true }
+        ]
+      },
+      "animation": {
+        "entrance": "stagger-up",
+        "style": "checklist",
+        "staggerDelay": 5
+      }
+    },
+    {
+      "id": 4,
+      "layout": "stats-grid",
+      "duration": 6,
+      "content": {
+        "label": "CONTEXT WINDOW",
+        "statsStyle": "bar",
+        "stats": [
+          { "label": "이전", "value": 20, "suffix": "200K 토큰" },
+          { "label": "현재", "value": 100, "suffix": "1M 토큰 (5배)" }
+        ]
+      },
+      "animation": {
+        "entrance": "stagger-up",
+        "style": "bar",
+        "staggerDelay": 5
+      }
+    },
+    {
+      "id": 5,
+      "layout": "comparison",
+      "duration": 8,
+      "content": {
+        "label": "INTERPRETATION",
+        "useComparePanel": true,
+        "leftColor": "bad",
+        "rightColor": "good",
+        "optionA": {
+          "title": "이전: 도구",
+          "features": [
+            "타이핑으로 명령",
+            "파일 단위 작업",
+            "일회성 실행"
+          ]
+        },
+        "optionB": {
+          "title": "현재: 동료",
+          "features": [
+            "말로 설명",
+            "프로젝트 전체 이해",
+            "반복 업무 위임"
+          ]
+        }
+      },
+      "animation": {
+        "entrance": "slide-left",
+        "style": "compare",
+        "staggerDelay": 5
+      }
+    },
+    {
+      "id": 6,
+      "layout": "list",
+      "duration": 6,
+      "content": {
+        "label": "PRACTICAL COMBO",
+        "gridStyle": "card-grid",
+        "items": [
+          {
+            "title": "1. 설계 전달",
+            "description": "/voice로 의도 설명"
+          },
+          {
+            "title": "2. 자동 반복",
+            "description": "/loop로 테스트 위임"
+          },
+          {
+            "title": "3. 전체 기억",
+            "description": "1M 토큰 컨텍스트"
+          }
+        ]
+      },
+      "animation": {
+        "entrance": "stagger-up",
+        "style": "bento",
+        "staggerDelay": 6
+      }
+    },
+    {
+      "id": 7,
+      "layout": "closing",
+      "duration": 5,
+      "content": {
+        "label": "CLOSING",
+        "takeaways": [
+          "AI 코딩 도구가 '명령 도구'에서 '동료'로 진화 중",
+          "음성, 반복 위임, 전체 컨텍스트 — 함께 일하는 방식의 변화"
+        ],
+        "cta": "오늘 /voice를 한 번 써보세요"
+      },
+      "animation": {
+        "entrance": "fade",
+        "style": "fade",
+        "staggerDelay": 5
+      }
+    }
+  ]
+}

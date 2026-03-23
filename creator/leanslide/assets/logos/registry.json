@@ -1,0 +1,20 @@
+{
+  "claude":      { "file": "logos/claude.svg",      "color": "#D97706" },
+  "chatgpt":     { "file": "logos/openai.svg",      "color": "#10A37F" },
+  "gemini":      { "file": "logos/gemini.svg",      "color": "#4285F4" },
+  "cursor":      { "file": "logos/cursor.svg",      "color": "#000000" },
+  "n8n":         { "file": "logos/n8n.svg",         "color": "#EA4B71" },
+  "notion":      { "file": "logos/notion.svg",      "color": "#000000" },
+  "figma":       { "file": "logos/figma.svg",       "color": "#F24E1E" },
+  "github":      { "file": "logos/github.svg",      "color": "#181717" },
+  "vercel":      { "file": "logos/vercel.svg",      "color": "#000000" },
+  "supabase":    { "file": "logos/supabase.svg",    "color": "#3ECF8E" },
+  "make":        { "file": "logos/make.svg",        "color": "#6D00CC" },
+  "zapier":      { "file": "logos/zapier.svg",      "color": "#FF4A00" },
+  "openai":      { "file": "logos/openai.svg",      "color": "#10A37F" },
+  "anthropic":   { "file": "logos/anthropic.svg",   "color": "#D97706" },
+  "midjourney":  { "file": "logos/midjourney.svg",  "color": "#000000" },
+  "perplexity":  { "file": "logos/perplexity.svg",  "color": "#20808D" },
+  "runway":      { "file": "logos/runway.svg",      "color": "#000000" },
+  "huggingface": { "file": "logos/huggingface.svg", "color": "#FFD21E" }
+}

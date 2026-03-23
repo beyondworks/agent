@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "title": "cue 시스템 테스트",
+    "theme": "creator"
+  },
+  "slides": [
+    {
+      "id": 1,
+      "layout": "title",
+      "content": {
+        "badge": "TEST",
+        "titlePre": "cue 시스템",
+        "titleAccent": "동작 테스트",
+        "titlePost": "",
+        "subtitle": "나레이션 동기화 검증용",
+        "command": "$ npm run test-cue"
+      },
+      "timing": {
+        "startMs": 0,
+        "endMs": 5000,
+        "cues": [
+          { "ms": 0, "target": "badge", "action": "fadeIn" },
+          { "ms": 500, "target": "headline", "action": "fadeIn" },
+          { "ms": 1500, "target": "subtitle", "action": "slideUp" },
+          { "ms": 3000, "target": "cli", "action": "typeIn" }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "layout": "split-7-5",
+      "content": {
+        "tag": "검증",
+        "title": "순차 등장 테스트",
+        "description": "각 항목이 cue 시점에 맞춰 등장하는지 확인",
+        "items": [
+          { "title": "항목 1", "description": "첫 번째 카드" },
+          { "title": "항목 2", "description": "두 번째 카드" },
+          { "title": "항목 3", "description": "세 번째 카드" }
+        ]
+      },
+      "timing": {
+        "startMs": 5000,
+        "endMs": 12000,
+        "cues": [
+          { "ms": 5000, "target": "headline", "action": "fadeIn" },
+          { "ms": 6000, "target": "item-0", "action": "staggerReveal" },
+          { "ms": 7500, "target": "item-1", "action": "staggerReveal" },
+          { "ms": 9000, "target": "item-2", "action": "staggerReveal" }
+        ]
+      }
+    }
+  ],
+  "subtitles": {
+    "words": [],
+    "sentences": [
+      { "text": "cue 시스템 동작 테스트입니다", "startMs": 0, "endMs": 2500 },
+      { "text": "나레이션에 맞춰 화면이 움직입니다", "startMs": 2800, "endMs": 5000 },
+      { "text": "첫 번째 항목이 등장합니다", "startMs": 5500, "endMs": 7000 },
+      { "text": "두 번째 항목이 등장합니다", "startMs": 7500, "endMs": 9000 },
+      { "text": "세 번째 항목이 등장합니다", "startMs": 9000, "endMs": 11000 }
+    ]
+  }
+}

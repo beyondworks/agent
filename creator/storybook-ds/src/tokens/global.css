@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  /* Backgrounds */
+  --color-bg-base: #1A1E26;
+  --color-bg-slide: #2B303B;
+  --color-bg-card: rgba(255, 255, 255, 0.03);
+
+  /* Text */
+  --color-text-primary: #ECECEC;
+  --color-text-secondary: rgba(236, 236, 236, 0.6);
+  --color-text-muted: rgba(236, 236, 236, 0.3);
+  --color-text-accent: rgba(0, 188, 212, 0.85);
+
+  /* Accent */
+  --color-accent: #00BCD4;
+  --color-accent-soft: rgba(0, 188, 212, 0.1);
+  --color-accent-border: rgba(0, 188, 212, 0.15);
+
+  /* Borders */
+  --color-border-glass: rgba(255, 255, 255, 0.06);
+  --color-border-dim: rgba(255, 255, 255, 0.04);
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Font Size */
+  --font-size-display: 96px;
+  --font-size-h1: 72px;
+  --font-size-h2: 48px;
+  --font-size-h3: 36px;
+  --font-size-body: 24px;
+  --font-size-caption: 18px;
+  --font-size-label: 14px;
+  --font-size-mono: 20px;
+
+  /* Font Weight */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+
+  /* Font Family */
+  --font-family-sans: 'Noto Sans KR', sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Blur */
+  --blur-glass: 24px;
+  --blur-subtle: 12px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
