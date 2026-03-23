@@ -1,0 +1,20 @@
+{
+  "projectId": "2026-03-23-fireship-agent-benchmark",
+  "topic": "Fireship 채널에서 에이전트 관련 조회수 높은 영상들을 벤치마킹하여 우리 캐릭터 스타일로 제작",
+  "format": "longform",
+  "aspectRatio": "16:9",
+  "style": "infographic-motion",
+  "styleReference": "",
+  "character": "character-v1",
+  "targetRuntime": 180,
+  "currentStage": "voice",
+  "stages": {
+    "research":  { "status": "done" },
+    "script":    { "status": "done", "note": "v2 축소 1283자/182초 목표" },
+    "subtitle":  { "status": "done", "note": "v2 78개 자막, 실측 기반 타이밍" },
+    "voice":     { "status": "done", "note": "v2 182.0초, 오차 +2.0초" },
+    "scenes":    { "status": "done", "note": "7씬+썸네일 gemini-3.1-flash-image-preview" },
+    "render":    { "status": "pending" },
+    "qa":        { "status": "pending" }
+  }
+}

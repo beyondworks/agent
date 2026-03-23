@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "description": "Creator Agent 벤치마킹 채널 목록",
+    "updatedAt": "2026-03-21"
+  },
+
+  "characterBase": {
+    "note": "캐릭터 화법/구조의 베이스가 되는 채널. character-v1.json의 basedOn과 동기화.",
+    "channels": [
+      {
+        "name": "메이커 에반 | Maker Evan",
+        "handle": "@maker-evan",
+        "subscribers": "N/A",
+        "weight": "60%",
+        "takeaway": "후킹, 구조, 밀도, 전개 속도. Claude Code 중심 AI 실무. 주 6~7회 업로드.",
+        "profileFile": "profiles/maker-evan.json"
+      },
+      {
+        "name": "코드깎는노인",
+        "handle": "N/A",
+        "subscribers": "N/A",
+        "weight": "40%",
+        "takeaway": "원리 설명, 비유 전개, 철학적 깊이. 개념을 2~3문장으로 풀어주는 전개력."
+      }
+    ]
+  },
+
+  "mustWatch": {
+    "note": "꼭 봐야 하는 해외 AI 유튜버. 콘텐츠 주제, 포맷, 비즈니스 모델 참고.",
+    "channels": [
+      {
+        "name": "Liam Ottley",
+        "handle": "@LiamOttley",
+        "subscribers": "42만",
+        "takeaway": "AI 자동화 에이전시 창시자. 이 사람만 봐도 인사이트 넘쳐남. AI 에이전시 비즈니스 모델, 고객 확보, 수익화 전략."
+      },
+      {
+        "name": "Nick Saraev",
+        "handle": "@NickSaraev",
+        "subscribers": "5만",
+        "takeaway": "Make, n8n 자동화 퀄리티가 미쳤음. 실전 자동화 워크플로우 구축의 교과서."
+      },
+      {
+        "name": "Jeff Su",
+        "handle": "@JeffSu",
+        "subscribers": "102만",
+        "takeaway": "초보자한테 너무 좋은 내용 + 영상 편집이 맛있음. AI 도구 활용을 쉽게 풀어내는 포맷 참고."
+      },
+      {
+        "name": "Stephen G. Pope",
+        "handle": "@StephenGPope",
+        "subscribers": "5만",
+        "takeaway": "수준 높은 자동화 시나리오. 자동화 고수 되려면 필수. 복잡한 워크플로우 설계 참고."
+      },
+      {
+        "name": "Eugene Kadzin",
+        "handle": "@EugeneKadzin",
+        "subscribers": "7천",
+        "takeaway": "에이전시 고객 미팅을 실제로 보여줌. 실전 세일즈/컨설팅 과정이 엄청 도움됨."
+      }
+    ]
+  },
+
+  "contentReference": {
+    "note": "콘텐츠 주제/포맷 참고용으로 리서치된 채널.",
+    "channels": [
+      {
+        "name": "Matt Wolfe",
+        "takeaway": "AI 뉴스 라운드업 포맷. script-001의 소스 채널."
+      },
+      {
+        "name": "Fireship",
+        "takeaway": "100초 설명 포맷, 디자인 스타일 참고."
+      },
+      {
+        "name": "Theo (t3.gg)",
+        "takeaway": "개발자 뉴스 해설."
+      },
+      {
+        "name": "Tina Huang",
+        "takeaway": "비개발자향 AI 콘텐츠."
+      },
+      {
+        "name": "Greg Isenberg",
+        "takeaway": "SaaS/스타트업 아이디어."
+      }
+    ]
+  },
+
+  "domestic": {
+    "note": "국내 채널 참고.",
+    "channels": [
+      {
+        "name": "김효율의 AI 개발단",
+        "handle": "@lean_kim",
+        "subscribers": "3천",
+        "takeaway": "AI로 기획~배포까지 혼자 끝내기. Creator Agent와 타겟 유사."
+      }
+    ]
+  }
+}

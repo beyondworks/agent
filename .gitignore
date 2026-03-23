@@ -12,3 +12,10 @@ storybook-static/
 .env*
 .DS_Store
 voice/
+
+# contents-agent
+.DS_Store
+.omc/
+*.wav
+__pycache__/
+.env

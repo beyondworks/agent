@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "creatorId": "maker-evan",
+    "creatorName": "메이커 에반 | Maker Evan",
+    "sourceUrls": [
+      "https://youtube.com/@maker-evan"
+    ],
+    "analyzedAt": "2026-03-18T23:30:00+09:00",
+    "sampleCount": 30,
+    "note": "원본 스타일 분석용. 최종 캐릭터는 이 프로파일을 베이스로 기획을 덧붙여 변형할 예정."
+  },
+
+  "voice": {
+    "formality": "mixed",
+    "endings": ["~거든요", "~잖아요", "~예요/이에요", "~입니다", "~해보세요", "~인 거예요"],
+    "fillers": ["자,", "근데", "근데요.", "사실", "솔직히", "쉽게 말하면", "비유하자면요."],
+    "catchphrases": [
+      "이게 진짜 중요해요",
+      "이게 핵심이에요",
+      "결과는요.",
+      "정리할게요",
+      "이런 경험 한 번쯤 있으시죠?",
+      "개발자 아니셔도 상관없어요",
+      "자, 그럼 바로 시작할게요",
+      "~한 번쯤 있으시죠?",
+      "솔직히 물어볼게요"
+    ],
+    "humor": "subtle",
+    "energy": "moderate",
+    "sentenceLength": "short",
+    "quirks": {
+      "selfDeprecation": true,
+      "confessionTwist": true,
+      "exaggeratedTitlesCalmerBody": true,
+      "directQuestions": true
+    }
+  },
+
+  "structure": {
+    "openingPattern": "도발적 질문/충격 사실 → '이런 경험 있으시죠?' 공감 유도 → 이번 영상 예고",
+    "bodyPattern": "문제 정의 → 비유로 설명 → 번호 매기기(첫째/둘째/셋째) → 사례 또는 시행착오 → 중간 정리",
+    "closingPattern": "핵심 N줄 요약(번호) → 핵심 메시지 한 줄 → 댓글 유도 질문 → 다음 영상 예고 → 구독 CTA",
+    "usesAnalogy": true,
+    "analogyStyle": "직장생활(신입/선배/팀) + 일상(공장/인테리어/요리/도서관) + 자동차",
+    "exampleDensity": "high",
+    "timestampsInDescription": true,
+    "midSummary": true
+  },
+
+  "titlePatterns": {
+    "provocativeStatement": ["아직도 ~쓰세요?", "~는 죽었습니다", "~ is DEAD"],
+    "urgency": ["이거 모르면 ~에 도태됩니다", "~하는 진짜 이유", "~3초만에 들통나는 이유"],
+    "numbered": ["~10단계", "~9가지", "~100배 차이"],
+    "confession": ["저도 충격받았습니다", "저라면 안 씁니다", "혼자만 쓰고 있었습니다"],
+    "contrast": ["~ vs ~, 딱 하나 차이입니다", "~잘 쓰는 사람은 ~안 합니다"]
+  },
+
+  "visual": {
+    "colorPalette": {
+      "primary": "#1a1a2e",
+      "secondary": "#16213e",
+      "accent": "#e94560",
+      "background": "#0f0f23",
+      "text": "#f1f1f1",
+      "subtitleBg": "#000000cc"
+    },
+    "fontStyle": "sans",
+    "layout": "balanced",
+    "darkMode": true
+  },
+
+  "content": {
+    "targetAudience": "AI에 관심 있는 개발자 + AI 도입을 고민하는 비개발자/팀 리더",
+    "domain": "AI 실무 활용 (Claude Code 중심)",
+    "depthLevel": "intermediate",
+    "ctaStyle": "댓글로 경험 공유 유도 + 구독/좋아요 + 다음 영상 예고",
+    "videoLength": {
+      "min": "3분",
+      "max": "14분",
+      "average": "6~8분"
+    },
+    "uploadFrequency": "주 6~7회",
+    "topicDistribution": {
+      "claudeCodeUsage": 0.35,
+      "aiAdoptionStrategy": 0.25,
+      "aiDevTech": 0.20,
+      "vibeCodingGeneral": 0.15,
+      "industryTrends": 0.05
+    }
+  },
+
+  "topVideos": [
+    { "title": "개발자가 AI 길들이는 데 6개월 걸린 이유 (시행착오 전부 공개)", "views": 142000, "length": "13:59" },
+    { "title": "클로드코드 직접 만든 사람이 공개한 사용법, 저도 충격받았습니다", "views": 108000, "length": "8:02" },
+    { "title": "아직도 RAG 쓰세요? 이거 보고 나면 멈춥니다", "views": 48000, "length": "6:09" },
+    { "title": "skills.sh 하나면 AI 코딩 레벨이 달라집니다", "views": 34000, "length": "5:15" },
+    { "title": "AI 잘 쓰는 팀 vs 망하는 팀, 딱 하나 차이입니다", "views": 31000, "length": "7:49" }
+  ]
+}

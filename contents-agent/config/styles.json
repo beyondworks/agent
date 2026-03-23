@@ -1,0 +1,79 @@
+{
+  "styles": {
+    "infographic-motion": {
+      "description": "MUI 다크모드 + CLI 애니메이션 + 절제된 글래스모피즘",
+      "colorPalette": {
+        "background": "#001C2F",
+        "primary": "#06E5AC",
+        "secondary": "#16213e",
+        "accent": "#4DFFD2",
+        "text": "#f1f1f1",
+        "subtitleBg": "#000000cc"
+      },
+      "fontStyle": "sans",
+      "darkMode": true,
+      "visualStyle": [
+        "MUI 다크모드 컴포넌트 스타일",
+        "CLI/터미널 애니메이션",
+        "절제된 글래스모피즘 (과하지 않게)"
+      ],
+      "motionRules": [
+        "3~5초마다 시각 변화",
+        "나레이션 싱크 애니메이션 (타이핑, 프로세스 시간차, 등장 모션)",
+        "단순 줌인/줌아웃만으로 동적 처리 금지",
+        "빈 화면 0%"
+      ],
+      "iconRules": [
+        "모든 아이콘은 SVG 벡터",
+        "AI 도구/서비스 로고: Iconify, lobehub에서 SVG 다운로드",
+        "이모지/이모티콘 사용 금지"
+      ],
+      "referenceImages": [],
+      "promptGuide": "nano-banana-official"
+    },
+    "character-animation": {
+      "description": "고정 캐릭터 아바타 + 설명 모션",
+      "colorPalette": {
+        "_note": "infographic-motion과 동일한 팔레트 사용",
+        "background": "#001C2F",
+        "primary": "#06E5AC",
+        "secondary": "#16213e",
+        "accent": "#4DFFD2",
+        "text": "#f1f1f1",
+        "subtitleBg": "#000000cc"
+      },
+      "characterAssets": [],
+      "motionRules": [
+        "캐릭터 표정/제스처 변화로 감정 전달",
+        "배경 전환으로 주제 변화 표현"
+      ],
+      "referenceImages": [],
+      "promptGuide": "veo3-official"
+    }
+  },
+  "subtitleStyle": {
+    "position": "bottom",
+    "maxLines": 1,
+    "fontSize": "large",
+    "background": "#000000cc",
+    "fontColor": "#f1f1f1",
+    "style": "youtube-standard"
+  },
+  "koreanTextRules": {
+    "accuracy": "한글 표기 정확성 필수",
+    "noEmoji": true,
+    "englishProperNouns": {
+      "rule": "한글 발음으로 변환",
+      "examples": {
+        "Claude Code": "클로드코드",
+        "ChatGPT": "챗지피티",
+        "Roll Back": "롤빽",
+        "Cursor": "커서",
+        "Vercel": "버쎌",
+        "GitHub": "깃허브",
+        "Copilot": "코파일럿"
+      },
+      "note": "신규 고유명사는 대본 생성 시 발음 변환표에 추가"
+    }
+  }
+}

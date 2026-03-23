@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "mode": "approval",
+  "approvalGates": {
+    "research": false,
+    "script": true,
+    "subtitle": false,
+    "voice": true,
+    "scenes": true,
+    "render": false,
+    "qa": true
+  },
+  "defaults": {
+    "format": "longform",
+    "style": "infographic-motion",
+    "character": "character-v1",
+    "targetRuntime": 600,
+    "language": "ko",
+    "ttsModel": "qwen3-1.7b",
+    "ttsCloneSource": "김효율.m4a",
+    "imageModel": "gemini3-nano-banana",
+    "videoModel": "gemini3-veo3",
+    "renderEngine": "tbd"
+  },
+  "koreanPace": {
+    "charsPerMinute": 275,
+    "ttsSpeedMultiplier": 1.54,
+    "_measured": "실측 424자/분 (2026-03-23, 1520자/215.3초)"
+  },
+  "retryPolicy": {
+    "maxRetries": 2,
+    "retryableStages": ["research", "voice", "scenes", "render"]
+  }
+}
