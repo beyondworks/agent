@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voice-clone"
+version = "0.1.0"
+description = "Qwen3 TTS voice cloning CLI — register voice templates, generate speech anywhere"
+requires-python = ">=3.10"
+dependencies = [
+    "qwen-tts>=0.1.0",
+    "soundfile>=0.12.0",
+    "click>=8.0",
+    "torch>=2.0",
+    "librosa>=0.10.0",
+]
+
+[project.scripts]
+voice-clone = "voice_clone.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
