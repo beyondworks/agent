@@ -139,6 +139,10 @@ ffmpeg -i tmp/video_with_audio.mp4 \
 
 ---
 
+## 오디오-비주얼 싱크 규칙
+
+**CROSSFADE = 0 필수.** Remotion Sequence 간 crossfade overlap은 비주얼 타임라인만 앞당기고 `<Audio>`는 연속 재생이므로 씬당 CROSSFADE 프레임만큼 누적 드리프트가 발생한다. 7씬 기준 CROSSFADE=12이면 Scene 7에서 2.4초 어긋남. 각 씬은 자체 sceneOut fade-out 애니메이션을 갖고 있으므로 씬 간 전환은 그것으로 충분하다. 씬 겹침 효과가 필요하면 씬별 `<Audio startFrom={}>` 분리 방식을 써야 한다.
+
 ## 보이스-자막 싱크 검증
 
 렌더링 완료 후 싱크를 반드시 검증한다.
