@@ -76,6 +76,54 @@
       ],
       "referenceImages": [],
       "promptGuide": "veo3-official"
+    },
+    "neobrutalism-claude": {
+      "description": "네오브루탈리즘 + Claude 아이덴티티 (크림 배경, 황토 악센트, 굵은 보더, 오프셋 그림자)",
+      "colorPalette": {
+        "background": "#FFF8F0",
+        "primary": "#D4714E",
+        "secondary": "#2C2C2C",
+        "accent": "#E8956A",
+        "danger": "#C0392B",
+        "text": "#1A1A1A",
+        "textDim": "rgba(26,26,26,0.5)",
+        "textMuted": "rgba(26,26,26,0.3)",
+        "subtitleBg": "rgba(26,26,26,0.85)",
+        "_rules": "최대 1개 악센트 컬러. 라이트 모드. 순수 흰색(#FFFFFF)은 카드 내부만 허용"
+      },
+      "fontStyle": {
+        "primary": "Pretendard",
+        "english": "Geist",
+        "mono": "JetBrains Mono",
+        "stack": "'Pretendard', 'Geist', -apple-system, system-ui, sans-serif",
+        "banned": ["Inter", "Noto Sans KR", "Roboto", "Arial", "Open Sans", "Helvetica"]
+      },
+      "darkMode": false,
+      "visualStyle": [
+        "네오브루탈리즘 카드 (3px solid #1A1A1A 보더, #FFFFFF 불투명 배경, 4px 4px 0 오프셋 그림자)",
+        "CLI/터미널: #1A1A1A 배경 + #D4714E 텍스트 (다크 반전)",
+        "글래스모피즘 금지 — backdrop-blur 없음, 불투명 배경만",
+        "Grain 텍스처 금지 — 깨끗한 면 대비",
+        "카드 borderRadius: 12px (기존 20px보다 날카로움)"
+      ],
+      "motionRules": [
+        "3~5초마다 시각 변화 (체크리스트 D14 필수)",
+        "나레이션 싱크 애니메이션 (키 프레이즈 0.3-0.5초 전에 시각 등장)",
+        "단순 줌인/줌아웃만으로 동적 처리 금지",
+        "빈 화면 0% (D15)",
+        "CROSSFADE = 0 (씬 간 누적 드리프트 방지)",
+        "모든 전환: cubic-bezier(0.16, 1, 0.3, 1) — linear/ease-in-out 금지",
+        "GPU 안전: transform + opacity만 애니메이션. top/left/width/height 금지",
+        "glow 대신 오프셋 그림자 크기 변화로 강조 표현"
+      ],
+      "iconRules": [
+        "모든 아이콘은 Iconify Solar set (SVG)",
+        "아이콘 색상: #1A1A1A (기본) 또는 #D4714E (강조)",
+        "이모지/이모티콘 사용 금지"
+      ],
+      "referenceImages": [],
+      "promptGuide": "nano-banana-official",
+      "_themeFile": "templates/remotion/themes/theme-neobrutalism-claude.ts"
     }
   },
   "designRules": {

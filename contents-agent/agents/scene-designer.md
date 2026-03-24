@@ -591,6 +591,71 @@ GitHub → 동일 절차
 
 ---
 
+## 테마 선택
+
+프로젝트별로 다른 비주얼 테마를 적용할 수 있다. 테마는 색상/카드 스타일/glow 효과만 교체하며, 레이아웃 패턴, 타이포그래피 규칙, 여백 시스템, 모션 규칙은 모든 테마에서 동일하게 적용된다.
+
+### 사용 가능한 테마
+
+| 테마 이름 | 설명 | 모드 |
+|----------|------|------|
+| `infographic-motion` (기본) | 다크 + 골드 악센트 + 글래스모피즘 | 다크 |
+| `neobrutalism-claude` | 크림 배경 + 황토 악센트 + 굵은 보더 + 오프셋 그림자 | 라이트 |
+
+### 테마 적용 방법
+
+1. `meta.json`의 `style` 필드에 테마 이름을 지정한다 (예: `"style": "neobrutalism-claude"`)
+2. 씬 코드에서 `getTheme()`으로 테마 토큰을 로드한다:
+
+```tsx
+import { getTheme } from '../templates/remotion/themes';
+
+const style = 'neobrutalism-claude'; // meta.json에서 읽어옴
+const fs = getTheme(style);
+
+// fs.bg, fs.accent, fs.card 등 동일한 인터페이스로 사용
+```
+
+3. `config/styles.json`의 해당 테마 항목에서 스타일별 세부 규칙을 참조한다
+
+### 테마 전환 시 변경되는 항목
+
+| 항목 | 테마마다 다름 | 비고 |
+|------|-------------|------|
+| 색상 팔레트 (bg, accent, text 등) | O | ThemeTokens에 정의 |
+| 카드 스타일 (border, bg, blur, radius) | O | card 토큰 |
+| glow/강조 효과 | O | glow 함수 |
+| 자막 배경 | O | subtitleBg |
+| 폰트 패밀리 | O (확장 가능) | 현재 동일 |
+
+### 테마 전환 시 변경되지 않는 항목 (전 테마 공통)
+
+- 그리드 시스템 (12컬럼, 세이프존, 여백 토큰)
+- 레이아웃 패턴 (Split, Bento, FullBleed 등)
+- 타이포그래피 규칙 (폰트 크기 스케일, 자간, 행간)
+- 여백 시스템 (SPACE 토큰, 카드 패딩, 텍스트 갭)
+- 모션 규칙 (easing, 금지 모션, 싱크 규칙)
+- SceneBase 래퍼 (fade-out, GrainOverlay는 테마별 on/off 가능)
+
+### rgba 헬퍼 (하드코딩 방지)
+
+테마 전환을 위해 씬 내 rgba 하드코딩을 금지한다. 대신 `theme-base.ts`의 헬퍼 사용:
+
+```tsx
+import { accentAlpha, whiteAlpha, blackAlpha } from '../templates/remotion/themes/theme-base';
+
+// 금지: rgba(255,197,5,0.4)
+// 사용: accentAlpha(fs.accent, 0.4)
+
+// 금지: rgba(255,255,255,0.08)
+// 사용: whiteAlpha(0.08)
+
+// 금지: rgba(0,0,0,0.5)
+// 사용: blackAlpha(0.5)
+```
+
+---
+
 ## 실행 절차
 
 1. `config/styles.json`을 읽어 색상 팔레트, 디자인 규칙, 모션 규칙을 로드한다.
