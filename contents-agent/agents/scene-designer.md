@@ -76,26 +76,168 @@ model: opus
 3. **글래스모피즘** — backdrop-blur + border-white/10 + shadow-inset-white/0.1 + bg-white/5 (1~2개 요소만)
 4. **Grain 텍스처** — fractalNoise SVG 오버레이, opacity 0.03, pointer-events: none
 
-### 타이포그래피
+### 타이포그래피 (필수 준수 — 임의 값 사용 금지)
 
-- **한글**: Pretendard, leading-tight~leading-snug (leading-none 금지), break-keep-all 필수
-- **영문**: Geist (디스플레이), tracking-tighter
+토큰 파일: `templates/remotion/typography.ts`. 규칙 원본: `config/styles.json`의 `designRules.typography`.
+
+**폰트**
+- **한글**: Pretendard, break-keep-all 필수
+- **영문**: Geist (디스플레이)
 - **코드**: JetBrains Mono
 - **금지 폰트**: Inter, Noto Sans KR, Roboto, Arial, Open Sans, Helvetica
 
+**폰트 크기 (반드시 이 스케일만 사용)**
+
+| 토큰 | px | 용도 |
+|------|-----|------|
+| display | 96-160 | 후킹 숫자, 임팩트 한 단어 |
+| h1 | 52-64 | 씬 제목 |
+| h2 | 36-44 | 섹션 제목, 카드 헤더 |
+| h3 | 28-32 | 소제목 |
+| body | 20-24 | 본문 설명 |
+| caption | 14-18 | 라벨, 태그, 부가 정보 |
+| micro | 12-13 | 타임스탬프, 출처 |
+
+**자간 (letterSpacing)**
+
+| 대상 | 값 | 조건 |
+|------|-----|------|
+| 한글 헤드라인 | -0.03em | 48px 이상 |
+| 한글 본문 | -0.02em | 20-32px (기본) |
+| 한글 캡션 | 0em | 13-18px (좁히면 뭉침) |
+| 영문 디스플레이 | -0.04em | 48px 이상 |
+| 영문 본문 | -0.02em | 20-32px |
+| 라벨/태그 | 0.08em | UPPERCASE 전용 |
+| 코드 | 0em | 모노스페이스 고정 |
+
+**행간 (lineHeight)**
+
+| 토큰 | 값 | 용도 |
+|------|-----|------|
+| number | 1.0 | 숫자 단독 (CountUp, 통계) |
+| headlineSingle | 1.1 | 헤드라인 1줄 |
+| headlineMulti | 1.2 | 헤드라인 2줄 (한글 1.1→잘림) |
+| body | 1.4 | 본문/설명 (기본값) |
+| long | 1.6 | 3줄 이상 긴 텍스트 |
+
+**금지**: leading-none(1.0) + 한글 2줄 이상 조합
+
+**들여쓰기**
+
+| 유형 | 값 | 비고 |
+|------|-----|------|
+| 일반 단락 | 0 | 들여쓰기 없음 |
+| 리스트/불릿 | 32px | 1 gutter 단위 |
+| 중첩 리스트 | +32px/level | 누적 |
+| 코드 블록 | 24px | + 좌측 accent 라인 2px |
+| 인용구 | 40px | + 좌측 accent 라인 3px (rgba(255,197,5,0.6)) |
+
+**인용구 스타일**
+- 좌측 라인: accent 0.6 opacity, 3px 두께, rounded
+- 인용 텍스트: h3 크기 (28-32px), italic, text 색상
+- 출처: caption 크기 (14-18px), textDim, 인용 아래 16px
+
+**컬럼 라인 맞추기**
+- 한 블록 내 텍스트는 반드시 좌측 정렬선 공유
+- 라벨→제목→본문→CTA 사이 간격: 8 / 16 / 24px
+- 인접 카드의 제목끼리 y좌표 일치 (수평 정렬)
+- 숫자+단위: baseline 정렬 (`alignItems: 'baseline'`)
+
+### 여백 시스템 (필수 준수 — 8px 배수만 사용)
+
+토큰 파일: `templates/remotion/typography.ts`의 `SPACE`. 규칙 원본: `config/styles.json`의 `designRules.spacing`.
+
+**여백 토큰**
+
+| 토큰 | 값 | 용도 |
+|------|-----|------|
+| xs | 8px | 라벨↔제목, 인라인 요소 간 |
+| sm | 12px | 아이콘↔텍스트 |
+| md | 16px | 제목↔본문, 리스트 항목 간 |
+| lg | 24px | 카드 간, 구분선 전후, gutter |
+| xl | 32px | 씬 제목↔콘텐츠, 카드 내부 상하 |
+| 2xl | 40px | 레이아웃 슬롯 내부 padding |
+| 3xl | 48px | 섹션 그룹 간 |
+| 4xl | 60px | FullBleed 오버레이 padding |
+
+**카드 내부 여백 (padding)**
+
+| 유형 | 상하 | 좌우 |
+|------|------|------|
+| 기본 카드 | 32px | 36px |
+| 소형 카드 | 24px | 28px |
+| 미니 Chip | 8px | 16px |
+
+**카드 간 갭**
+- 수평 (같은 행): 24px (= gutter)
+- 수직 (같은 그룹): 24px
+- 섹션 분리 (다른 그룹): 48px
+
+**텍스트 블록 간 간격**
+- 라벨 → 제목: 8px (밀접)
+- 제목 → 본문: 16px (논리적 연결)
+- 본문 → 구분선: 24px (섹션 전환)
+- 구분선 → 수치/CTA: 24px
+- 아이콘 → 텍스트: 12px (인라인)
+- 씬 제목 → 콘텐츠: 32px
+
+**레이아웃 슬롯 내부 padding**
+- Split/Bento Hero: 40px
+- Bento 소형: 32px
+- FullBleed 오버레이: 60px
+
+**금지**: 임의 여백 값 사용. 모든 간격은 위 토큰에서만 선택
+
+### 그리드 시스템 (1920x1080)
+
+모든 씬은 `config/styles.json`의 `designRules.grid` + `templates/remotion/grid.ts` 기준으로 배치.
+
+| 영역 | 좌표 | 크기 | 용도 |
+|------|------|------|------|
+| 세이프존 | (80, 60) | 1760x940 | 모든 콘텐츠 |
+| 자막 | y=960 | 1920x80 | 자막 전용 |
+| 프로그래스바 | y=1060 | 1920x4 | 영상 진행바 |
+
+- 12컬럼, gutter 24px, 행 갭 32px (섹션 간 64px)
+- `GRID.span(n)` 함수로 N컬럼 너비 계산
+- **세이프존 밖 콘텐츠 배치 금지** (배경/장식 요소 제외)
+
 ### 레이아웃 패턴 (taste skill 기반)
 
-씬마다 다른 레이아웃을 사용한다. 인접 씬은 반드시 다른 패턴.
+씬마다 다른 레이아웃을 사용한다. 인접 씬은 반드시 다른 패턴. 템플릿: `templates/remotion/layouts.tsx`
 
-| 패턴 | 설명 | 적합한 씬 |
-|------|------|----------|
-| Split Screen | 60/40 텍스트+비주얼 | 비교, 대조 |
-| Bento Grid | 2fr 1fr 1fr 비대칭 그리드 | 기능 나열, 데이터 시각화 |
-| Zig-Zag 교차 | 이미지-텍스트 좌우 교대 | 단계별 설명 |
-| Full-bleed + 오버레이 | 전면 배경 위 텍스트 | 임팩트 메시지, 후킹 |
-| Z-Axis Cascade | 카드 겹침 + 미세 회전 | 선택지 비교, 스택 |
+| 패턴 | 컴포넌트 | 설명 | 적합한 씬 |
+|------|---------|------|----------|
+| Split Screen | `SplitLayout` | 60/40 텍스트+비주얼 (even=true로 50/50) | 비교, 대조 |
+| Bento Grid | `BentoLayout` | hero+상우+하우 비대칭 | 기능 나열, 데이터 시각화 |
+| Zig-Zag 교차 | `ZigZagLayout` | 이미지-텍스트 좌우 교대 | 단계별 설명 |
+| Full-bleed | `FullBleedLayout` | 전면 배경 위 텍스트 | 임팩트 메시지, 후킹 |
+| Z-Axis Cascade | `CascadeLayout` | 카드 겹침 + 미세 회전 | 선택지 비교, 스택 |
+| 중앙 집중 | `CenterLayout` | 단일 메시지 강조 | CTA, 핵심 한 줄 |
+| 3단 카드 | `TriCardLayout` | 가로 3카드 배치 | 기능 3개 비교 |
 
 **금지 패턴**: 3-Column 동일 카드 그리드, 동일 레이아웃 반복, 가장자리 꽉 채운 콘텐츠
+
+### 씬 베이스 템플릿
+
+`templates/remotion/SceneBase.tsx`를 사용하면 GrainOverlay, scene-out fade, easing이 자동 적용된다.
+
+```tsx
+import { SceneBase, ease, CLAMP, fadeIn } from '../templates';
+import { SplitLayout } from '../templates';
+
+const DURATION = 850;
+
+export const MyScene: React.FC = () => (
+  <SceneBase duration={DURATION} id="my-scene">
+    {(frame) => (
+      <SplitLayout left={<Text />} right={<Card />} />
+    )}
+  </SceneBase>
+);
+```
+
+제공 유틸: `ease` (시그니처 easing), `CLAMP` (extrapolate 기본값), `fadeIn(frame, start)`, `slideUp(frame, start)`
 
 ### 카드 구조 (Double-Bezel)
 

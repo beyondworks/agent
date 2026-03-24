@@ -180,10 +180,63 @@ ttsSpeedMultiplier: {현재 값}
 
 ---
 
+## Voicebox 서버 안정화
+
+### 사전 헬스체크 (TTS 작업 전 필수)
+
+TTS 합성 시작 전 반드시 Voicebox 서버 상태를 확인한다.
+
+```bash
+# 헬스체크
+scripts/voicebox-healthcheck.sh
+
+# 서버 다운 시 수동 재시작
+scripts/voicebox-watchdog.sh --once
+```
+
+### 서버 정보
+
+| 항목 | 값 |
+|------|-----|
+| URL | `http://127.0.0.1:17493` |
+| 바이너리 | `/Users/yoogeon/Projects/Voicebox.app/Contents/MacOS/voicebox-server` |
+| 데이터 | `~/Library/Application Support/sh.voicebox.app` |
+| 포트 | 17493 |
+
+### API 엔드포인트
+
+| 메서드 | 경로 | 설명 |
+|--------|------|------|
+| GET | `/profiles` | 보이스 프로필 목록 |
+| POST | `/generate` | TTS 합성 요청 |
+| GET | `/generate/{id}/status` | SSE 폴링 (data: {...} 형식) |
+| GET | `/audio/{id}` | 완성된 오디오 다운로드 |
+
+### Watchdog (24/7 자동 감시)
+
+launchd 서비스로 등록하면 서버 다운 시 자동 재시작:
+
+```bash
+cp scripts/sh.voicebox.watchdog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/sh.voicebox.watchdog.plist
+```
+
+동작: 30초 간격 헬스체크, 3회 연속 실패 시 서버 재시작. 로그: `~/Library/Logs/voicebox-watchdog.log`
+
+### TTS 합성 중 서버 다운 대응
+
+1. API 호출 실패 시 5초 대기 후 재시도 (최대 2회)
+2. 재시도 실패 시 `scripts/voicebox-watchdog.sh --once`로 서버 복구 시도
+3. 복구 후 실패한 블록부터 재개 (이전 블록 재합성 불필요)
+4. 복구 실패 시 Director에게 보고
+
+---
+
 ## 에러 핸들링
 
 | 상황 | 대응 |
 |------|------|
+| Voicebox 서버 다운 | 헬스체크 → watchdog --once → 재시도. 실패 시 Director 보고 |
 | TTStudio_v2 경로 없음 | 즉시 중단 후 Director에게 경로 확인 요청 |
 | 모델 파일 없음 | 즉시 중단 후 Director에게 보고 |
 | TTS 생성 실패 | 최대 2회 재시도. 2회 초과 시 Director에게 보고 |
