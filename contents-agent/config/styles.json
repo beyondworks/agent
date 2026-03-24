@@ -259,7 +259,19 @@
       "doubleBezel": "외부 쉘(bg-white/5, ring-1 ring-white/10, p-1.5, rounded-2rem) + 내부 코어(inner highlight, 더 작은 radius)",
       "glassEffect": "backdrop-blur + border-white/10 + shadow-inset-white/0.1 + bg-white/5",
       "elevation": "위계를 전달할 때만 카드 사용. 그림자는 배경 색조에 맞춤",
-      "padding": "기본 32/36, 소형 24/28, chip 8/16 — spacing.cardPadding 참조"
+      "padding": "기본 32/36, 소형 24/28, chip 8/16 — spacing.cardPadding 참조",
+      "sizing": {
+        "rule": "콘텐츠 핏 (content-fit) — 카드는 내용물에 맞게 크기를 조절",
+        "banned": "height:100% 또는 flex:1로 컬럼 전체를 채우는 것 금지",
+        "method": "height:auto + padding으로 콘텐츠에 맞춤. 빈 공간 최소화",
+        "balance": "같은 컬럼 내 카드들은 시각적 균형 유지 — 유사한 높이 또는 의도적 비율 차이(예: 6:4)"
+      },
+      "columnFit": [
+        "카드가 컬럼 전체를 채우면 안 됨 — 콘텐츠 양에 맞는 크기만 사용",
+        "Bento 우측 상/하 카드: 콘텐츠 핏 후 갭으로 균형 조절",
+        "카드 간 높이가 크게 차이나면 작은 카드에 시각 요소(차트, 아이콘) 추가하여 균형",
+        "카드 내부 상하 여백이 콘텐츠 높이보다 크면 padding 줄이거나 카드 높이 축소"
+      ]
     },
     "motion": {
       "signature": "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
