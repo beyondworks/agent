@@ -1,0 +1,12 @@
+models:
+  research: "gemini-3-flash"
+  script: "gemini-3.1-pro"
+  scene_direction: "gemini-3-pro"
+  image_prompt: "gemini-2.5-flash"
+  image_generation: "nano-banana"
+  video_generation: "veo-3"
+  metadata: "gemini-3-flash"
+
+api:
+  gemini_base_url: "https://generativelanguage.googleapis.com"
+  elevenlabs_base_url: "https://api.elevenlabs.io"
