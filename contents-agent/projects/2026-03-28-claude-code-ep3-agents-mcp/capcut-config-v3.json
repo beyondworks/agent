@@ -1,0 +1,36 @@
+{
+  "name": "EP3-에이전트와MCP-v3",
+  "fps": 30,
+  "canvas": { "width": 1920, "height": 1080 },
+  "video": [
+    "output-v2/seg-01.mp4",
+    "output-v2/seg-02.mp4",
+    "output-v2/seg-03.mp4",
+    "output-v2/seg-04.mp4",
+    "output-v2/seg-05.mp4",
+    "output-v2/seg-06.mp4",
+    "output-v2/seg-07.mp4",
+    "output-v2/seg-08.mp4",
+    "output-v2/seg-09.mp4",
+    "output-v2/seg-10.mp4",
+    "output-v2/seg-11.mp4",
+    "output-v2/seg-12.mp4",
+    "output-v2/seg-13.mp4",
+    "output-v2/seg-14.mp4",
+    "output-v2/seg-15.mp4",
+    "output-v2/seg-16.mp4",
+    "output-v2/seg-17.mp4",
+    "output-v2/seg-18.mp4"
+  ],
+  "audio": [
+    { "path": "voice/scene-01.wav", "start": 0 },
+    "voice/scene-02.wav",
+    "voice/scene-03.wav",
+    "voice/scene-04.wav",
+    "voice/scene-05.wav",
+    "voice/scene-06.wav",
+    "voice/scene-07.wav",
+    "voice/scene-08.wav",
+    "voice/scene-09.wav"
+  ]
+}

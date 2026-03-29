@@ -1,0 +1,9 @@
+{
+  "chunks_file": "script/tts-chunks.md",
+  "output_dir": "voice",
+  "profile_id": "6d6070e5-d965-43eb-8b8f-401ab9d5504e",
+  "language": "ko",
+  "padding_ms": 300,
+  "gap_within_scene_ms": 400,
+  "gap_between_scene_ms": 800
+}
