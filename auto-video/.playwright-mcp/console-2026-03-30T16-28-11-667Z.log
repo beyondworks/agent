@@ -1,0 +1,15 @@
+[    1018ms] [WARNING] [warn 102] user_id 为空，请确定是否传入，如果是异步通过 updateCommonPackage 接口传入，可以忽略该提示! @ https://s15-kling.klingai.com/kos/s101/nlav112918/kling-web/assets/js/vendor--1F8bnisE.js:0
+[    1706ms] [WARNING] [warn 102] user_id 为空，请确定是否传入，如果是异步通过 updateCommonPackage 接口传入，可以忽略该提示! @ https://s15-kling.klingai.com/kos/s101/nlav112918/kling-web/assets/js/vendor--1F8bnisE.js:14
+[    1849ms] [WARNING] [warn 102] user_id 为空，请确定是否传入，如果是异步通过 updateCommonPackage 接口传入，可以忽略该提示! @ https://s16-kling.klingai.com/kos/s101/nlav112918/kling-web-federation-core/index.esm-DSNzQBJS.js:5282
+[    2090ms] [WARNING] ksurl.cn/csHfgepO, radar: 307 @ https://s15-kling.klingai.com/kos/s101/nlav112918/kling-web/assets/js/util-DWJsEzzp.js:4
+[    2126ms] [WARNING] ksurl.cn/csHfgepO, radar: 307 @ https://s15-kling.klingai.com/kos/s101/nlav112918/kling-web/assets/js/util-DWJsEzzp.js:4
+[   15470ms] [ERROR] Cross-Origin-Opener-Policy policy would block the window.closed call. @ https://accounts.google.com/gsi/client:131
+[   15471ms] [ERROR] Cross-Origin-Opener-Policy policy would block the window.closed call. @ https://accounts.google.com/gsi/client:131
+[   42680ms] [ERROR] Cross-Origin-Opener-Policy policy would block the window.closed call. @ https://accounts.google.com/gsi/client:131
+[   42680ms] [ERROR] Cross-Origin-Opener-Policy policy would block the window.closed call. @ https://accounts.google.com/gsi/client:131
+[   44691ms] [ERROR] Cross-Origin-Opener-Policy policy would block the window.closed call. @ https://accounts.google.com/gsi/client:131
+[   44692ms] [ERROR] Cross-Origin-Opener-Policy policy would block the window.closed call. @ https://accounts.google.com/gsi/client:131
+[   46822ms] [WARNING] ksurl.cn/csHfgepO, radar: 307 @ https://s15-kling.klingai.com/kos/s101/nlav112918/kling-web/assets/js/util-DWJsEzzp.js:4
+[   59527ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.google.com') does not match the recipient window's origin ('https://kling.ai'). @ https://www.googletagmanager.com/gtag/js?id=AW-16698183456:762
+[   59527ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://www.youtube.com') does not match the recipient window's origin ('https://kling.ai'). @ https://www.googletagmanager.com/gtag/js?id=AW-16698183456:762
+[   59527ms] [WARNING] Failed to execute 'postMessage' on 'DOMWindow': The target origin provided ('https://m.youtube.com') does not match the recipient window's origin ('https://kling.ai'). @ https://www.googletagmanager.com/gtag/js?id=AW-16698183456:762
